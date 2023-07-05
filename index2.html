@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daily Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+      width: 9in;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      border: 1px solid #000;
+      padding: 8px;
+    }
+
+    td {
+      border: 1px solid #000;
+      padding: 8px;
+    }
+
+    td:first-child {
+      width: 3in;
+      font-weight: bold;
+      vertical-align: top;
+    }
+
+    td:nth-child(2) {
+      width: 6in;
+      vertical-align: top;
+    }
+
+    td textarea {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      resize: vertical;
+      border: none;
+      background-color: transparent;
+      overflow: auto;
+    }
+
+    #download-btn {
+      display: block;
+      margin: 20px auto;
+      text-align: center;
+    }
+  </style>
+  <script>
+    function generateTable() {
+      var table = document.getElementById("myTable");
+      var data = [
+        ["Student's Name:", ""],
+        ["Teachers' Name:", ""],
+        ["Book Information:", ""],
+        ["Comprehension and Listening:", ""],
+        ["Fluency:", ""],
+        ["Pronunciation:", ""],
+        ["Vocabulary", ""],
+        ["Grammar", ""],
+        ["Memorized Sentences:", ""],
+        ["Teacher's Comment:", ""],
+      ];
+
+      for (var i = 0; i < data.length; i++) {
+        var row = table.insertRow(i + 1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = '<textarea readonly>' + data[i][0] + '</textarea>';
+        cell2.innerHTML = '<textarea oninput="updateData(this, ' + i + ', 1)" onkeydown="resizeTextarea(this)" onkeyup="resizeTextarea(this)">' + data[i][1] + '</textarea>';
+      }
+    }
+
+    function updateData(textarea, row, col) {
+      var table = document.getElementById("myTable");
+      var cell = table.rows[row + 1].cells[col];
+      cell.firstChild.value = textarea.value;
+      resizeTextarea(cell.firstChild);
+    }
+
+    function resizeTextarea(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    function downloadTable() {
+      var table = document.getElementById("myTable").cloneNode(true);
+      table.rows[0].deleteCell(2); // Remove the extra cell in the header
+      table.rows[0].cells[1].setAttribute("colspan", "2"); // Adjust colspan of the second cell in the header
+      var html = table.outerHTML;
+
+      var data = new Blob([html], { type: 'text/html' });
+      var url = URL.createObjectURL(data);
+
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'daily_report.doc';
+      link.click();
+    }
+  </script>
+</head>
+<body onload="generateTable()">
+  <h1>Daily Report</h1>
+  <table id="myTable">
+    <tr>
+      <th>Indicators</th>
+      <th>Details</th>
+    </tr>
+  </table>
+  <div id="download-btn">
+    <button onclick="downloadTable()">Download Report</button>
+  </div>
+</body>
+</html>
